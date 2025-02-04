@@ -162,7 +162,7 @@ let gameOver = false;
 
 // Reset the game
 function resetGame() {
-  alert(`Game Over! Ton score est de ${gameState.score}`);
+  alert(`Game Over! Ton score est de ${gameState.score}. Tap to restart.`);
   gameOver = true; // Bloque la boucle du jeu
 
   // Ajouter un événement pour relancer le jeu après un game over
