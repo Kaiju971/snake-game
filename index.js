@@ -78,6 +78,12 @@ function handleTouchEnd(e) {
   touchEndX = e.changedTouches[0].clientX;
   touchEndY = e.changedTouches[0].clientY;
   handleSwipe();
+
+  // Réinitialisation des coordonnées après chaque swipe
+  touchStartX = 0;
+  touchStartY = 0;
+  touchEndX = 0;
+  touchEndY = 0;
 }
 
 function handleSwipe() {
