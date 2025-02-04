@@ -1,0 +1,34 @@
+body{
+margin:0;
+font-family: Arial, sans-serif;
+background-image: url(./image/forest.jpg);
+background-repeat: no-repeat;
+background-size: cover;
+display:flex;
+justify-content:center;
+align-items:center;
+height: 100vh;
+position: relative;
+
+}
+
+canvas{
+width: 100%;
+height: auto;
+max-width: 400px;
+display: block;
+margin: auto;
+background: #420c0c;
+border: 2px solid #291879;
+box-shadow: black;
+}
+
+#score{
+position: absolute;
+top:10px;
+left:50%;
+transform:translateX(-50%);
+font-size: 18p;
+font-weight: bold;
+color: white;
+}
