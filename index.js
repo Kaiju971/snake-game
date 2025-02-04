@@ -16,32 +16,24 @@ let gameState = {
   score: 0,
 };
 
-let gameOver = false;
+let touchStartX = 0,
+  touchStartY = 0,
+  touchEndX = 0,
+  touchEndY = 0;
 
 // Initialize the game
 function initGame() {
-  document.addEventListener("keydown", () => {
-    if (gameOver) restartGame();
+  document.addEventListener("keydown", handleKeyPress);
+  document.addEventListener("touchstart", handleTouchStart);
+  document.addEventListener("touchmove", (e) => e.preventDefault(), {
+    passive: false,
   });
-
-  document.addEventListener("touchstart", () => {
-    if (gameOver) restartGame();
-  });
-
-  document.addEventListener(
-    "touchmove",
-    (e) => {
-      e.preventDefault();
-    },
-    { passive: false }
-  );
-
   document.addEventListener("touchend", handleTouchEnd);
   spawnFood();
   gameLoop();
 }
 
-// Handle key presses
+// Handle key presses for desktop
 function handleKeyPress(event) {
   const keyDirection = {
     ArrowUp: "up",
@@ -51,7 +43,7 @@ function handleKeyPress(event) {
   };
   const newDirection = keyDirection[event.key];
 
-  if (newDirection) {
+  if (newDirection && !gameOver) {
     if (
       (newDirection === "up" && gameState.direction !== "down") ||
       (newDirection === "down" && gameState.direction !== "up") ||
@@ -64,11 +56,6 @@ function handleKeyPress(event) {
 }
 
 // Gestion du swipe mobile
-let touchStartX = 0,
-  touchStartY = 0,
-  touchEndX = 0,
-  touchEndY = 0;
-
 function handleTouchStart(e) {
   touchStartX = e.touches[0].clientX;
   touchStartY = e.touches[0].clientY;
@@ -90,12 +77,15 @@ function handleSwipe() {
   const dx = touchEndX - touchStartX;
   const dy = touchEndY - touchStartY;
 
+  // Horizontal swipe (left/right)
   if (Math.abs(dx) > Math.abs(dy)) {
     if (dx > 0 && gameState.direction !== "left")
       gameState.nextDirection = "right";
     else if (dx < 0 && gameState.direction !== "right")
       gameState.nextDirection = "left";
-  } else {
+  }
+  // Vertical swipe (up/down)
+  else {
     if (dy > 0 && gameState.direction !== "up")
       gameState.nextDirection = "down";
     else if (dy < 0 && gameState.direction !== "down")
@@ -167,6 +157,8 @@ function updateGame() {
     gameState.snake.pop();
   }
 }
+
+let gameOver = false;
 
 // Reset the game
 function resetGame() {
