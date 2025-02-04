@@ -164,10 +164,17 @@ let gameOver = false;
 function resetGame() {
   alert(`Game Over! Your score was ${gameState.score}`);
   gameOver = true; // Bloque la boucle du jeu
+
+  // Ajouter un événement pour relancer le jeu après un game over
+  document.addEventListener("keydown", restartGame);
+  document.addEventListener("touchstart", restartGame);
 }
 
 // Fonction pour redémarrer le jeu après un game over
 function restartGame() {
+  // Vérifier que le jeu est bien terminé avant de relancer
+  if (!gameOver) return;
+
   gameOver = false;
   gameState = {
     snake: [{ x: 5, y: 5 }],
@@ -179,6 +186,10 @@ function restartGame() {
   scoreDisplay.textContent = "Score: 0";
   spawnFood();
   gameLoop();
+
+  // Supprimer les écouteurs après redémarrage
+  document.removeEventListener("keydown", restartGame);
+  document.removeEventListener("touchstart", restartGame);
 }
 
 // Draw the game
