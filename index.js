@@ -162,18 +162,44 @@ let gameOver = false;
 
 // Reset the game
 function resetGame() {
-  alert(`Game Over! Ton score est de ${gameState.score}. Tap to restart.`);
-  gameOver = true; // Bloque la boucle du jeu
-
-  // Ajouter un événement pour relancer le jeu après un game over
-  document.addEventListener("keydown", restartGame);
-  document.addEventListener("touchstart", restartGame);
+  document.getElementById('game-over-message').style.display = 'block'; // Afficher le message
+  document.getElementById('final-score').textContent = `Your score was ${gameState.score}`; // Afficher le score
+  gameOver = true; // Bloquer la boucle du jeu
 }
 
 // Fonction pour redémarrer le jeu après un game over
 function restartGame() {
-  // Vérifier que le jeu est bien terminé avant de relancer
-  if (!gameOver) return;
+  gameOver = false;
+  gameState = {
+    snake: [{ x: 5, y: 5 }],
+    food: { x: 10, y: 10 },
+    direction: "right",
+    nextDirection: "right",
+    score: 0,
+  };
+  scoreDisplay.textContent = "Score: 0";
+  spawnFood();
+  gameLoop();
+  document.getElementById('game-over-message').style.display = 'none'; // Cacher le message de fin
+
+   // Supprimer les écouteurs après redémarrage
+  document.removeEventListener("keydown", handleKeyPress);  // Re-ajoute l'écouteur pour recommencer à jouer
+  document.removeEventListener("touchstart", handleTouchStart);
+  document.addEventListener("keydown", handleKeyPress);
+  document.addEventListener("touchstart", handleTouchStart);
+
+}
+
+// Ajouter un écouteur pour relancer le jeu
+document.getElementById('game-over-message').addEventListener('click', restartGame); // Relancer le jeu au clic sur le message
+
+// Game loop
+//  function gameLoop() {
+//    if (gameOver) return; // Stoppe le jeu si gameOver est activé
+//    updateGame();
+//    drawGame();
+//    setTimeout(() => requestAnimationFrame(gameLoop), 15000 / config.fps);
+//  }
 
   gameOver = false;
   gameState = {
