@@ -20,6 +20,13 @@ let gameState = {
 function initGame() {
   document.addEventListener("keydown", handleKeyPress);
   document.addEventListener("touchstart", handleTouchStart);
+  document.addEventListener(
+    "touchmove",
+    (e) => {
+      e.preventDefault();
+    },
+    { passive: false }
+  );
   document.addEventListener("touchend", handleTouchEnd);
   spawnFood();
   gameLoop();
