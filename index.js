@@ -21,6 +21,8 @@ let touchStartX = 0,
   touchEndX = 0,
   touchEndY = 0;
 
+let gameOver = false;
+
 // Initialize the game
 function initGame() {
   document.addEventListener("keydown", handleKeyPress);
@@ -40,18 +42,34 @@ function handleKeyPress(event) {
     ArrowDown: "down",
     ArrowLeft: "left",
     ArrowRight: "right",
+    " ": "restart", // Espace pour redémarrer
   };
+
   const newDirection = keyDirection[event.key];
 
   if (newDirection && !gameOver) {
-    if (
-      (newDirection === "up" && gameState.direction !== "down") ||
-      (newDirection === "down" && gameState.direction !== "up") ||
-      (newDirection === "left" && gameState.direction !== "right") ||
-      (newDirection === "right" && gameState.direction !== "left")
-    ) {
-      gameState.nextDirection = newDirection;
+    if (newDirection === "restart") {
+      restartGame(); // Redémarre le jeu si l'espace est pressé
+    } else {
+      // Gérer la direction uniquement si le jeu n'est pas terminé
+      if (
+        (newDirection === "up" && gameState.direction !== "down") ||
+        (newDirection === "down" && gameState.direction !== "up") ||
+        (newDirection === "left" && gameState.direction !== "right") ||
+        (newDirection === "right" && gameState.direction !== "left")
+      ) {
+        gameState.nextDirection = newDirection;
+      }
     }
+  } else if (
+    gameOver &&
+    (event.key === "ArrowUp" ||
+      event.key === "ArrowDown" ||
+      event.key === "ArrowLeft" ||
+      event.key === "ArrowRight" ||
+      event.key === " ")
+  ) {
+    restartGame(); // Relancer le jeu si une touche est pressée après un game over
   }
 }
 
@@ -158,12 +176,12 @@ function updateGame() {
   }
 }
 
-let gameOver = false;
-
 // Reset the game
 function resetGame() {
-  document.getElementById('game-over-message').style.display = 'block'; // Afficher le message
-  document.getElementById('final-score').textContent = `Your score was ${gameState.score}`; // Afficher le score
+  document.getElementById("game-over-message").style.display = "block"; // Afficher le message
+  document.getElementById(
+    "final-score"
+  ).textContent = `Ton score est de ${gameState.score}`; // Afficher le score
   gameOver = true; // Bloquer la boucle du jeu
 }
 
@@ -180,43 +198,30 @@ function restartGame() {
   scoreDisplay.textContent = "Score: 0";
   spawnFood();
   gameLoop();
-  document.getElementById('game-over-message').style.display = 'none'; // Cacher le message de fin
+  document.getElementById("game-over-message").style.display = "none"; // Cacher le message de fin
 
-   // Supprimer les écouteurs après redémarrage
-  document.removeEventListener("keydown", handleKeyPress);  // Re-ajoute l'écouteur pour recommencer à jouer
+  // Supprimer les écouteurs après redémarrage
+  document.removeEventListener("keydown", handleKeyPress);
   document.removeEventListener("touchstart", handleTouchStart);
   document.addEventListener("keydown", handleKeyPress);
   document.addEventListener("touchstart", handleTouchStart);
-
 }
 
 // Ajouter un écouteur pour relancer le jeu
-document.getElementById('game-over-message').addEventListener('click', restartGame); // Relancer le jeu au clic sur le message
+document
+  .getElementById("game-over-message")
+  .addEventListener("click", restartGame); // Relancer le jeu au clic sur le message
 
 // Game loop
-//  function gameLoop() {
-//    if (gameOver) return; // Stoppe le jeu si gameOver est activé
-//    updateGame();
-//    drawGame();
-//    setTimeout(() => requestAnimationFrame(gameLoop), 15000 / config.fps);
-//  }
-
-  gameOver = false;
-  gameState = {
-    snake: [{ x: 5, y: 5 }],
-    food: { x: 10, y: 10 },
-    direction: "right",
-    nextDirection: "right",
-    score: 0,
-  };
-  scoreDisplay.textContent = "Score: 0";
-  spawnFood();
-  gameLoop();
-
-  // Supprimer les écouteurs après redémarrage
-  document.removeEventListener("keydown", restartGame);
-  document.removeEventListener("touchstart", restartGame);
+function gameLoop() {
+  if (gameOver) return; // Stoppe le jeu si gameOver est activé
+  updateGame();
+  drawGame();
+  setTimeout(() => requestAnimationFrame(gameLoop), 15000 / config.fps);
 }
+
+// Start the game
+initGame();
 
 // Draw the game
 function drawGame() {
@@ -241,14 +246,3 @@ function drawGame() {
     config.cellSize
   );
 }
-
-// Game loop
-function gameLoop() {
-  if (gameOver) return; // Stoppe le jeu si gameOver est activé
-  updateGame();
-  drawGame();
-  setTimeout(() => requestAnimationFrame(gameLoop), 15000 / config.fps);
-}
-
-// Start the game
-initGame();
